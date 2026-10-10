@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HopLine: a business number that rings wherever you are</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="top">
+    <a class="logo" href="/" aria-label="HopLine home">
+      <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
+        <rect x="2" y="2" width="36" height="36" rx="11" fill="#b6f23a" stroke="#1c1347" stroke-width="2.5"/>
+        <path d="M12 24c2-7 7-10 13-9m0 0-3-3m3 3-3 3M13 29h14" fill="none" stroke="#1c1347" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>HopLine</span>
+    </a>
+    <div id="userbar" class="userbar" hidden>
+      <span id="userName" class="who"></span>
+      <button class="btn ghost small" id="logoutBtn" type="button">Log out</button>
+    </div>
+  </header>
+
+  <!-- Landing + auth -->
+  <main id="landing" class="hero">
+    <section class="hero-copy">
+      <h1>Get a business number that rings wherever you are.</h1>
+      <p class="lead">Sign up, get your own virtual number, send calls to your real phone, and let voicemail catch the rest.</p>
+
+      <div class="card auth" id="auth">
+        <div class="auth-tabs" role="tablist">
+          <button type="button" role="tab" class="on" data-auth="signup" aria-selected="true">Sign up</button>
+          <button type="button" role="tab" data-auth="login" aria-selected="false">Log in</button>
+        </div>
+
+        <form id="signupForm" class="form" autocomplete="on">
+          <label>Your name<input name="name" required minlength="2" maxlength="60" autocomplete="name" placeholder="Arbad"></label>
+          <label>Email<input name="email" type="email" required autocomplete="email" placeholder="you@business.com"></label>
+          <label>Password<input name="password" type="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
+          <label>Forward calls to <small>(optional, add later too)</small><input name="forwardTo" inputmode="tel" placeholder="03027475322"></label>
+          <p class="error" id="signupError" role="alert"></p>
+          <button class="btn lime big" type="submit">Get my number</button>
+        </form>
+
+        <form id="loginForm" class="form" autocomplete="on" hidden>
+          <label>Email<input name="email" type="email" required autocomplete="email"></label>
+          <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
+          <p class="error" id="loginError" role="alert"></p>
+          <button class="btn violet big" type="submit">Log in</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="phone-wrap" aria-label="Live example of a forwarded call">
+      <div class="sticker s1">Unique number</div>
+      <div class="sticker s2">Voicemail</div>
+      <div class="phone">
+        <div class="screen" id="demo">
+          <div class="demo-top" id="demoTop">Incoming call</div>
+          <div class="rings"><span></span><span></span><span></span><div class="avatar">A</div></div>
+          <div class="demo-name">Ayesha Khan</div>
+          <div class="demo-sub">calling +92 51 3847 2916</div>
+          <div class="demo-status" id="demoStatus">Ringing</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Dashboard -->
+  <main id="app" class="app" hidden>
+    <section class="card numbercard">
+      <div>
+        <p class="kicker">Your HopLine number</p>
+        <p class="bignum" id="bigNum"></p>
+        <div class="chips">
+          <span class="chip" id="fwdChip"></span>
+          <span class="chip" id="vmChip"></span>
+        </div>
+      </div>
+      <div class="numactions">
+        <button class="btn sun" id="copyNum" type="button">Copy number</button>
+        <button class="btn lime" id="simBtn" type="button">Simulate a call</button>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="stat sky"><b id="stCalls">0</b><span>Calls</span></div>
+      <div class="stat lime"><b id="stFwd">0</b><span>Forwarded</span></div>
+      <div class="stat pink"><b id="stVm">0</b><span>New voicemails</span></div>
+    </section>
+
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button type="button" role="tab" class="on" data-tab="forwarding" aria-selected="true">Call forwarding</button>
+      <button type="button" role="tab" data-tab="voicemail" aria-selected="false">Voicemail <i id="vmBadge" class="badge" hidden></i></button>
+      <button type="button" role="tab" data-tab="calls" aria-selected="false">Call log</button>
+    </nav>
+
+    <section id="tab-forwarding" class="card tab sun">
+      <h2>Call forwarding</h2>
+      <p>Calls to your HopLine number ring the phone you choose.</p>
+      <label class="switch"><input type="checkbox" id="fwdOn"><span class="track"></span><span>Forward my calls</span></label>
+      <div class="row">
+        <label>Forward to<input id="fwdTo" inputmode="tel" placeholder="03027475322"></label>
+        <label>Ring for
+          <select id="ringSec">
+            <option value="10">10 seconds</option>
+            <option value="20">20 seconds</option>
+            <option value="30">30 seconds</option>
+            <option value="45">45 seconds</option>
+          </select>
+        </label>
+      </div>
+      <p class="preview" id="fwdPreview"></p>
+      <button class="btn ink" id="saveFwd" type="button">Save forwarding</button>
+    </section>
+
+    <section id="tab-voicemail" class="card tab pink" hidden>
+      <h2>Voicemail</h2>
+      <p>Callers land here when your phone doesn't answer or forwarding is off.</p>
+      <label class="switch"><input type="checkbox" id="vmOn"><span class="track"></span><span>Voicemail is on</span></label>
+      <label>Greeting
+        <textarea id="greeting" rows="3" maxlength="300"></textarea>
+      </label>
+      <div class="row">
+        <label>Longest message
+          <select id="vmMax">
+            <option value="30">30 seconds</option>
+            <option value="60">1 minute</option>
+            <option value="120">2 minutes</option>
+          </select>
+        </label>
+        <div class="row-btns">
+          <button class="btn ghost" id="hearGreeting" type="button">Hear greeting</button>
+          <button class="btn ink" id="saveVm" type="button">Save voicemail</button>
+        </div>
+      </div>
+      <h3 class="inbox-title">Inbox</h3>
+      <div id="vmList" class="list"></div>
+    </section>
+
+    <section id="tab-calls" class="card tab sky" hidden>
+      <h2>Call log</h2>
+      <div id="callList" class="list"></div>
+    </section>
+  </main>
+
+  <div id="modal-root"></div>
+  <div id="toasts" aria-live="polite"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
